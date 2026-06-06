@@ -1,0 +1,7 @@
+@import "@yoophi/ui/globals.css";
+
+/* Tailwind v4 does not scan workspace package sources automatically — list
+   the UI packages this app consumes (paths relative to this file). The ui
+   package covers its own components; the app's own sources are auto-detected. */
+@source "../../../../../packages/file-tree/src";
+@source "../../../../../packages/file-list/src";

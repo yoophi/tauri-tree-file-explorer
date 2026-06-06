@@ -3,12 +3,10 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
-/* Tailwind v4 does not scan workspace package sources automatically — each
-   package that uses utility classes must be listed here (paths are relative
-   to this file). The importing app's own sources are covered by its root. */
+/* Tailwind v4 does not scan workspace package sources automatically — this
+   covers the ui package's own components. Apps add @source entries for the
+   other workspace packages they consume. */
 @source "../components";
-@source "../../../file-tree/src";
-@source "../../../file-list/src";
 
 @custom-variant dark (&:is(.dark *));
 

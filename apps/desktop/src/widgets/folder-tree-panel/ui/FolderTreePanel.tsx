@@ -1,8 +1,13 @@
+import { useMemo } from "react";
 import { FolderTree } from "@yoophi/file-tree";
 import { Skeleton } from "@yoophi/ui/components/skeleton";
+import type { FileEntry } from "@yoophi/explorer-core";
 import { useDirEntriesQuery } from "@/entities/file-system";
 import { useSelectedFolder } from "@/features/folder-navigation";
 import { useHiddenFilesStore } from "@/features/toggle-hidden-files";
+
+const toDirPaths = (entries: FileEntry[]) =>
+  entries.filter((entry) => entry.isDir).map((entry) => entry.path);
 
 /**
  * Thin adapter: wires the route (?path=), the react-query cache, and the
@@ -14,6 +19,13 @@ export function FolderTreePanel() {
   const { data: rootEntries } = useDirEntriesQuery(homeDir, showHidden);
   // Shares the file-list panel's query via the react-query cache.
   const { data: selectedEntries } = useDirEntriesQuery(selectedPath, showHidden);
+
+  // Stable identity so the package's graft effect runs only when the listing
+  // actually changes, not on every adapter render.
+  const childDirs = useMemo(
+    () => (selectedEntries === undefined ? [] : toDirPaths(selectedEntries)),
+    [selectedEntries],
+  );
 
   // The tree model is created once from initialDirs, so mount the tree only
   // after the root listing is available.
@@ -27,15 +39,12 @@ export function FolderTreePanel() {
     );
   }
 
-  const toDirPaths = (entries: typeof rootEntries) =>
-    entries.filter((entry) => entry.isDir).map((entry) => entry.path);
-
   return (
     <FolderTree
       root={homeDir}
       initialDirs={toDirPaths(rootEntries)}
       selectedPath={selectedPath}
-      childDirs={selectedEntries === undefined ? [] : toDirPaths(selectedEntries)}
+      childDirs={childDirs}
       onSelectFolder={selectFolder}
     />
   );
