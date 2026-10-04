@@ -1,20 +1,12 @@
-import type { FileEntry } from "@yoophi/explorer-core";
+import { compareCodePoints, type FileEntry } from "@yoophi/explorer-core";
 import { consumeScan, type ScanTransport } from "@yoophi/scan-client";
-
-function compareNames(leftPoints: string[], rightPoints: string[]): number {
-  for (let index = 0; index < Math.min(leftPoints.length, rightPoints.length); index++) {
-    const difference = leftPoints[index].codePointAt(0)! - rightPoints[index].codePointAt(0)!;
-    if (difference !== 0) return difference;
-  }
-  return leftPoints.length - rightPoints.length;
-}
 
 export function sortDirectoryEntries(entries: FileEntry[]): FileEntry[] {
   return entries
     .map((entry) => ({ entry, name: Array.from(entry.name.toLowerCase()) }))
     .sort((left, right) => {
       if (left.entry.isDir !== right.entry.isDir) return left.entry.isDir ? -1 : 1;
-      return compareNames(left.name, right.name);
+      return compareCodePoints(left.name, right.name);
     })
     .map(({ entry }) => entry);
 }

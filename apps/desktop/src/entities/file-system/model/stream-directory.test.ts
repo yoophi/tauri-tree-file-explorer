@@ -34,13 +34,15 @@ function fixture() {
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 test("directory-first case-folded order matches the legacy listing", () => {
+  const original = [
+    entry("z"), entry("a", true), entry("B"), entry("A", true),
+    entry("😀"), entry("\uE000"),
+  ];
   assert.deepEqual(
-    sortDirectoryEntries([
-      entry("z"), entry("a", true), entry("B"), entry("A", true),
-      entry("😀"), entry("\uE000"),
-    ]).map(({ name }) => name),
+    sortDirectoryEntries(original).map(({ name }) => name),
     ["a", "A", "B", "z", "\uE000", "😀"],
   );
+  assert.deepEqual(original.map(({ name }) => name), ["z", "a", "B", "A", "😀", "\uE000"]);
 });
 
 test("publishes sorted batches before completion and keeps query data complete-only", async () => {
