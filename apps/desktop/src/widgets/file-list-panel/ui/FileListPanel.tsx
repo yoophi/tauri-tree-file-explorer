@@ -1,19 +1,17 @@
 import { FileList } from "@yoophi/file-list";
+import { useSettings } from "@yoophi/settings-core/react";
 import { useDirEntriesQuery } from "@/entities/file-system";
 import { useSelectedFolder } from "@/features/folder-navigation";
-import {
-  ToggleHiddenFilesButton,
-  useHiddenFilesStore,
-} from "@/features/toggle-hidden-files";
+import { ExplorerSettingsControls, preferencesSettings } from "@/features/settings";
 
 /**
  * Thin adapter: maps the directory query state into the controlled
  * @yoophi/file-list component and injects the app's header controls.
  */
-export function FileListPanel() {
+export function FileListPanel({ onResetLayout }: { onResetLayout: () => void }) {
   const { selectedPath, selectFolder } = useSelectedFolder();
-  const showHidden = useHiddenFilesStore((state) => state.showHidden);
-  const { data, isPending, isError, error } = useDirEntriesQuery(
+  const { value: { showHidden } } = useSettings(preferencesSettings);
+  const { data, isFetching, isStreaming, isError, error } = useDirEntriesQuery(
     selectedPath,
     showHidden,
   );
@@ -22,10 +20,19 @@ export function FileListPanel() {
     <FileList
       selectedPath={selectedPath}
       entries={data}
-      loading={isPending}
+      loading={isFetching && (data?.length ?? 0) === 0 && !isError}
       error={isError ? error : null}
       onOpenFolder={selectFolder}
-      headerActions={<ToggleHiddenFilesButton />}
+      headerActions={
+        <div className="flex items-center gap-2">
+          {isStreaming && (
+            <span role="status" className="text-xs text-muted-foreground">
+              Scanning… {data?.length ?? 0}
+            </span>
+          )}
+          <ExplorerSettingsControls onResetLayout={onResetLayout} />
+        </div>
+      }
     />
   );
 }

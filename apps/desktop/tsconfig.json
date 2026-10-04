@@ -3,6 +3,8 @@
   "compilerOptions": {
     /* Path aliases */
     "baseUrl": ".",
+    /* Resolve linked source against this app's React types. */
+    "preserveSymlinks": true,
     "paths": {
       "@/*": ["./src/*"]
     }

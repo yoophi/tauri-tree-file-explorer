@@ -1,15 +1,17 @@
 import path from "node:path";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 const host = process.env.TAURI_DEV_HOST;
+const explorerKit = path.resolve(__dirname, "../../../explorer-kit");
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
   plugins: [react(), tailwindcss()],
 
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
@@ -22,7 +24,10 @@ export default defineConfig(() => ({
       "@yoophi/explorer-core",
       "@yoophi/file-list",
       "@yoophi/file-tree",
-      "@yoophi/ui",
+      "@yoophi/scan-client",
+      "@yoophi/settings-core",
+      "@yoophi/settings-ui",
+      "@yoophi/ui-radix",
     ],
   },
 
@@ -32,6 +37,9 @@ export default defineConfig(() => ({
   clearScreen: false,
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
+    fs: {
+      allow: [searchForWorkspaceRoot(__dirname), explorerKit],
+    },
     port: 1420,
     strictPort: true,
     host: host || false,
