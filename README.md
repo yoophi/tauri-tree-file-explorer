@@ -88,3 +88,5 @@ Rust application의 HomeDirectoryPort·DirectoryListingPort는 Tauri 없이 home
 - [남은 리뷰 지적 수정 결과](../explorer-kit/docs/remaining-review-fixes-report.md)
 
 문서 기준: 2026-10-05 로컬 구현. 아키텍처 리뷰의 개선 권고와 공통 기능 후보는 완료된 구현과 구분합니다.
+
+공통 `scan-client`의 등록 확인·취소·종료 수명은 `ScanLifecycle`로 통합되었습니다. Tree는 기존 `consumeScan` transport를 통해 이를 사용하며, 완료된 목록만 Query 캐시에 반영하는 앱 정책은 유지합니다. 추가 공통 후보 중 재귀 walker·그룹·이미지 입력은 이 앱의 사용 사례에 맞지 않아 강제로 연결하지 않습니다.
